@@ -15,15 +15,17 @@ import androidx.core.view.WindowInsetsCompat
 import com.example.omnilens.service.OverlayService
 
 class MainActivity : AppCompatActivity() {
-    private lateinit var statusText: TextView
-    private lateinit var btnStartOverlay: Button
 
-    // Modern way to handle activity results (replacing onActivityResult)
-    private val overlayPermissionLauncher = registerForActivityResult(
-        ActivityResultContracts.StartActivityForResult()
-    ) {
-        checkOverlayPermission()
-    }
+    private lateinit var tvStatusOverlay: TextView
+    private lateinit var tvStatusAccess: TextView
+    private lateinit var btnAction: Button
+
+    // Launcher for Overlay Permission (Modern Way)
+    private val overlayPermissionLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            // Logic handled in onResume, but we keep this hook just in case
+        }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -34,30 +36,68 @@ class MainActivity : AppCompatActivity() {
             insets
         }
 
-        statusText = findViewById(R.id.tv_status)
-        btnStartOverlay = findViewById(R.id.btn_start_overlay)
+        tvStatusOverlay = findViewById(R.id.tv_status_overlay)
+        tvStatusAccess = findViewById(R.id.tv_status_access)
+        btnAction = findViewById(R.id.btn_action)
 
-        checkOverlayPermission()
+        updateUI()
 
-        btnStartOverlay.setOnClickListener {
-            if (!Settings.canDrawOverlays(this)) {
-                requestOverlayPermission()
-            } else {
-                startOverlayService()
-            }
+        btnAction.setOnClickListener {
+            handleButtonClick()
         }
-
     }
 
-    private fun checkOverlayPermission() {
-        if (Settings.canDrawOverlays(this)) {
-            statusText.text = "Status: Permission Granted ✅"
-            statusText.setTextColor(getColor(android.R.color.holo_green_dark))
-            btnStartOverlay.text = "Start System Overlay"
+    /**
+     * SENIOR ENGINEER TIP:
+     * We use onResume() to auto-refresh the UI when the user returns from Settings.
+     * This makes the app feel "smart" and responsive.
+     */
+    override fun onResume() {
+        super.onResume()
+        updateUI()
+    }
+
+    private fun updateUI() {
+        val isOverlayGranted = Settings.canDrawOverlays(this)
+        val isAccessGranted = isAccessibilityEnabled()
+
+        if (isOverlayGranted) {
+            tvStatusOverlay.text = "Granted ✅"
+            tvStatusOverlay.setTextColor(getColor(android.R.color.holo_green_dark))
         } else {
-            statusText.text = "Status: Permission Missing ❌"
-            statusText.setTextColor(getColor(android.R.color.holo_red_dark))
-            btnStartOverlay.text = "Grant Overlay Permission"
+            tvStatusOverlay.text = "Missing ❌"
+            tvStatusOverlay.setTextColor(getColor(android.R.color.holo_red_dark))
+        }
+
+        if (isAccessGranted) {
+            tvStatusAccess.text = "Active ✅"
+            tvStatusAccess.setTextColor(getColor(android.R.color.holo_green_dark))
+        } else {
+            tvStatusAccess.text = "Inactive ❌"
+            tvStatusAccess.setTextColor(getColor(android.R.color.holo_red_dark))
+        }
+
+        when {
+            !isOverlayGranted -> {
+                btnAction.text = "Step 1: Grant Overlay Permission"
+                btnAction.isEnabled = true
+            }
+            !isAccessGranted -> {
+                btnAction.text = "Step 2: Enable Accessibility"
+                btnAction.isEnabled = true
+            }
+            else -> {
+                btnAction.text = "🚀 Start OmniLens"
+                btnAction.isEnabled = true
+            }
+        }
+    }
+
+    private fun handleButtonClick() {
+        when {
+            !Settings.canDrawOverlays(this) -> requestOverlayPermission()
+            !isAccessibilityEnabled() -> requestAccessibilityPermission()
+            else -> startOverlayService()
         }
     }
 
@@ -69,11 +109,30 @@ class MainActivity : AppCompatActivity() {
         overlayPermissionLauncher.launch(intent)
     }
 
+    private fun requestAccessibilityPermission() {
+        Toast.makeText(this, "Find 'OmniLens' and turn it ON", Toast.LENGTH_LONG).show()
+        val intent = Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS)
+        startActivity(intent)
+    }
+
     private fun startOverlayService() {
-        Toast.makeText(this, "Starting Overlay Service...", Toast.LENGTH_SHORT).show()
-
         val intent = Intent(this, OverlayService::class.java)
-        startService(intent)
+        // Android 8.0+ Requirement
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            startForegroundService(intent)
+        } else {
+            startService(intent)
+        }
+        moveTaskToBack(true)
+    }
 
+    private fun isAccessibilityEnabled(): Boolean {
+        val expectedService = "$packageName/${packageName}.service.OmniAccessibilityService"
+        val enabledServices = Settings.Secure.getString(
+            contentResolver,
+            Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES
+        ) ?: return false
+
+        return enabledServices.contains(expectedService)
     }
 }

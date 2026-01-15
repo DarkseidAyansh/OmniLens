@@ -5,39 +5,105 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:padding="24dp"
     tools:context=".MainActivity">
 
-    <LinearLayout
+    <TextView
+        android:id="@+id/tv_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="OmniLens Setup"
+        android:textSize="28sp"
+        android:textStyle="bold"
+        android:textColor="@android:color/black"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="32dp"/>
+
+    <TextView
+        android:id="@+id/tv_subtitle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Grant necessary permissions to enable the system overlay."
+        android:textAlignment="center"
+        android:textSize="16sp"
+        android:alpha="0.7"
+        app:layout_constraintTop_toBottomOf="@id/tv_title"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="8dp"/>
+
+    <TextView
+        android:id="@+id/lbl_perm_overlay"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="1. System Overlay"
+        android:textStyle="bold"
+        android:textSize="18sp"
+        android:layout_marginTop="48dp"
+        app:layout_constraintTop_toBottomOf="@id/tv_subtitle"
+        app:layout_constraintStart_toStartOf="parent"/>
+
+    <TextView
+        android:id="@+id/tv_status_overlay"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Missing ❌"
+        android:textSize="16sp"
+        android:textColor="@android:color/holo_red_dark"
+        app:layout_constraintTop_toTopOf="@id/lbl_perm_overlay"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="@id/lbl_perm_overlay"/>
+
+    <View
+        android:id="@+id/divider1"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:gravity="center"
-        android:padding="24dp">
+        android:layout_height="1dp"
+        android:background="#E0E0E0"
+        android:layout_marginTop="16dp"
+        app:layout_constraintTop_toBottomOf="@id/lbl_perm_overlay"/>
 
-        <TextView
-            android:id="@+id/tv_title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Visionary OS Tool"
-            android:textSize="24sp"
-            android:textStyle="bold"
-            android:layout_marginBottom="32dp"/>
+    <TextView
+        android:id="@+id/lbl_perm_access"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="2. Accessibility Service"
+        android:textStyle="bold"
+        android:textSize="18sp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintTop_toBottomOf="@id/divider1"
+        app:layout_constraintStart_toStartOf="parent"/>
 
-        <TextView
-            android:id="@+id/tv_status"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Checking Permissions..."
-            android:textSize="18sp"
-            android:layout_marginBottom="16dp"/>
+    <TextView
+        android:id="@+id/tv_status_access"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Missing ❌"
+        android:textSize="16sp"
+        android:textColor="@android:color/holo_red_dark"
+        app:layout_constraintTop_toTopOf="@id/lbl_perm_access"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="@id/lbl_perm_access"/>
 
-        <Button
-            android:id="@+id/btn_start_overlay"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Check Permission"
-            android:padding="16dp"/>
+    <View
+        android:id="@+id/divider2"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#E0E0E0"
+        android:layout_marginTop="16dp"
+        app:layout_constraintTop_toBottomOf="@id/lbl_perm_access"/>
 
-    </LinearLayout>
+    <Button
+        android:id="@+id/btn_action"
+        android:layout_width="0dp"
+        android:layout_height="60dp"
+        android:text="Grant Overlay Permission"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginBottom="32dp"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

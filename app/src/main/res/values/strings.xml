@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">OmniLens</string>
+    <string name="accessibility_service_description">OmniLens helps you read text and capture screens from any app useful for normal as well as specially abled people.\n</string>
 </resources>
