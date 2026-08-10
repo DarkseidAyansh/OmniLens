@@ -21,6 +21,10 @@ import android.widget.Toast
 import androidx.core.app.NotificationCompat
 import com.example.omnilens.R
 import kotlin.math.abs
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class OverlayService : Service() {
 
@@ -68,12 +72,19 @@ class OverlayService : Service() {
 
         panelView.findViewById<Button>(R.id.btn_read_text).setOnClickListener {
             closePanel()
+            OmniAccessibilityService.instance?.saveCurrentHighlight()
+        }
 
-            val service = OmniAccessibilityService.instance
-            if (service != null) {
-                service.saveCurrentHighlight()
-            } else {
-                Toast.makeText(this, "Accessibility Service is not active", Toast.LENGTH_SHORT).show()
+        panelView.findViewById<Button>(R.id.btn_screenshot).setOnClickListener {
+            closePanel()
+            CoroutineScope(Dispatchers.Main).launch {
+                delay(200)
+                val service = OmniAccessibilityService.instance
+                if (service != null) {
+                    service.takeSmartScreenshot()
+                } else {
+                    Toast.makeText(applicationContext, "Service not active", Toast.LENGTH_SHORT).show()
+                }
             }
         }
     }

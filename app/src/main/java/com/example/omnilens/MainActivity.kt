@@ -216,7 +216,7 @@ class MainActivity : AppCompatActivity() {
             startService(intent)
         }
         Toast.makeText(this, "Bubble Launched!", Toast.LENGTH_SHORT).show()
-        moveTaskToBack(true) // Minimize the app so they can use the bubble
+        moveTaskToBack(true)
     }
 
     private fun isAccessibilityEnabled(): Boolean {
@@ -226,30 +226,74 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun shareClip(clip: Data) {
-        val intent = Intent(Intent.ACTION_SEND).apply {
-            type = "text/plain"
-            putExtra(Intent.EXTRA_SUBJECT, "Copied from ${clip.sourceApp}")
-            putExtra(Intent.EXTRA_TEXT, clip.text)
+        if (clip.imagePath != null) {
+            val imageFile = java.io.File(clip.imagePath)
+
+            if (imageFile.exists()) {
+                val uri = androidx.core.content.FileProvider.getUriForFile(
+                    this,
+                    "${packageName}.provider",
+                    imageFile
+                )
+
+                val intent = Intent(Intent.ACTION_SEND).apply {
+                    type = "image/png"
+                    putExtra(Intent.EXTRA_STREAM, uri)
+                    addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                }
+                startActivity(Intent.createChooser(intent, "Share Image via..."))
+            } else {
+                Toast.makeText(this, "Image file not found", Toast.LENGTH_SHORT).show()
+            }
+
+        } else {
+            val intent = Intent(Intent.ACTION_SEND).apply {
+                type = "text/plain"
+                putExtra(Intent.EXTRA_SUBJECT, "Copied from ${clip.sourceApp}")
+                putExtra(Intent.EXTRA_TEXT, clip.text)
+            }
+            startActivity(Intent.createChooser(intent, "Share Text via..."))
         }
-        startActivity(Intent.createChooser(intent, "Share via..."))
     }
 
     private fun showEditDialog(clip: Data) {
-        val editText = android.widget.EditText(this).apply {
-            setText(clip.text)
-            setPadding(48, 48, 48, 48)
-            background = null
-        }
-        androidx.appcompat.app.AlertDialog.Builder(this)
-            .setTitle("Edit Clip")
-            .setView(editText)
-            .setPositiveButton("Save") { _, _ ->
-                val newText = editText.text.toString()
-                if (newText != clip.text) {
-                    viewModel.updateClip(clip.copy(text = newText))
-                }
+        if (clip.imagePath != null) {
+            val dialog = android.app.Dialog(this, android.R.style.Theme_Black_NoTitleBar_Fullscreen)
+
+            val imageView = android.widget.ImageView(this).apply {
+                layoutParams = android.view.ViewGroup.LayoutParams(
+                    android.view.ViewGroup.LayoutParams.MATCH_PARENT,
+                    android.view.ViewGroup.LayoutParams.MATCH_PARENT
+                )
+                scaleType = android.widget.ImageView.ScaleType.FIT_CENTER
+
+                setImageURI(android.net.Uri.fromFile(java.io.File(clip.imagePath)))
+                setOnClickListener { dialog.dismiss() }
             }
-            .setNegativeButton("Cancel", null)
-            .show()
+
+            dialog.setContentView(imageView)
+            dialog.show()
+
+        } else {
+            val editText = android.widget.EditText(this).apply {
+                setText(clip.text)
+                setPadding(48, 48, 48, 48)
+                background = null
+            }
+
+            androidx.appcompat.app.AlertDialog.Builder(this)
+                .setTitle("Edit Clip")
+                .setView(editText)
+                .setPositiveButton("Save") { _, _ ->
+                    val newText = editText.text.toString()
+                    if (newText != clip.text) {
+                        viewModel.updateClip(clip.copy(text = newText))
+                    }
+                }
+                .setNegativeButton("Cancel", null)
+                .show()
+        }
     }
+
+
 }
