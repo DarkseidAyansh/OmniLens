@@ -27,15 +27,8 @@
             android:id="@+id/btn_read_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Read Screen Text"
+            android:text="Save Text"
             android:backgroundTint="#2196F3"/>
-
-        <Button
-            android:id="@+id/btn_night_mode"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Night Mode"
-            android:backgroundTint="#FF9800"/>
 
         <Button
             android:id="@+id/btn_screenshot"
