@@ -5,105 +5,140 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="24dp"
+    android:background="#FAFAFA"
     tools:context=".MainActivity">
 
-    <TextView
-        android:id="@+id/tv_title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="OmniLens Setup"
-        android:textSize="28sp"
-        android:textStyle="bold"
-        android:textColor="@android:color/black"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="32dp"/>
-
-    <TextView
-        android:id="@+id/tv_subtitle"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="Grant necessary permissions to enable the system overlay."
-        android:textAlignment="center"
-        android:textSize="16sp"
-        android:alpha="0.7"
-        app:layout_constraintTop_toBottomOf="@id/tv_title"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="8dp"/>
-
-    <TextView
-        android:id="@+id/lbl_perm_overlay"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="1. System Overlay"
-        android:textStyle="bold"
-        android:textSize="18sp"
-        android:layout_marginTop="48dp"
-        app:layout_constraintTop_toBottomOf="@id/tv_subtitle"
-        app:layout_constraintStart_toStartOf="parent"/>
-
-    <TextView
-        android:id="@+id/tv_status_overlay"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Missing ❌"
-        android:textSize="16sp"
-        android:textColor="@android:color/holo_red_dark"
-        app:layout_constraintTop_toTopOf="@id/lbl_perm_overlay"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="@id/lbl_perm_overlay"/>
-
-    <View
-        android:id="@+id/divider1"
+    <RelativeLayout
+        android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="#E0E0E0"
-        android:layout_marginTop="16dp"
-        app:layout_constraintTop_toBottomOf="@id/lbl_perm_overlay"/>
+        android:layout_height="?attr/actionBarSize"
+        android:paddingHorizontal="24dp"
+        app:layout_constraintTop_toTopOf="parent">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="OmniLens"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:textColor="#212121"
+            android:layout_centerVertical="true"/>
+    </RelativeLayout>
 
-    <TextView
-        android:id="@+id/lbl_perm_access"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="2. Accessibility Service"
-        android:textStyle="bold"
-        android:textSize="18sp"
-        android:layout_marginTop="16dp"
-        app:layout_constraintTop_toBottomOf="@id/divider1"
-        app:layout_constraintStart_toStartOf="parent"/>
-
-    <TextView
-        android:id="@+id/tv_status_access"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Missing ❌"
-        android:textSize="16sp"
-        android:textColor="@android:color/holo_red_dark"
-        app:layout_constraintTop_toTopOf="@id/lbl_perm_access"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="@id/lbl_perm_access"/>
-
-    <View
-        android:id="@+id/divider2"
+    <LinearLayout
+        android:id="@+id/layout_setup"
         android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="#E0E0E0"
-        android:layout_marginTop="16dp"
-        app:layout_constraintTop_toBottomOf="@id/lbl_perm_access"/>
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        android:padding="24dp"
+        android:gravity="center_vertical"
+        app:layout_constraintTop_toBottomOf="@id/toolbar"
+        app:layout_constraintBottom_toBottomOf="parent">
 
-    <Button
-        android:id="@+id/btn_action"
-        android:layout_width="0dp"
-        android:layout_height="60dp"
-        android:text="Grant Overlay Permission"
-        android:textSize="16sp"
-        android:textStyle="bold"
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Setup Required"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textColor="#424242"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="OmniLens needs these permissions to capture context across your apps."
+            android:textColor="#757575"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="24dp"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@android:color/white"
+            android:elevation="2dp"
+            android:padding="16dp">
+
+            <RelativeLayout android:layout_width="match_parent" android:layout_height="wrap_content">
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="1. System Overlay" android:textStyle="bold" android:textSize="16sp" />
+                <TextView android:id="@+id/tv_status_overlay" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Missing" android:textStyle="bold" android:textColor="@android:color/holo_red_dark" android:layout_alignParentEnd="true"/>
+            </RelativeLayout>
+            <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#EEEEEE" android:layout_marginVertical="12dp"/>
+            <RelativeLayout android:layout_width="match_parent" android:layout_height="wrap_content">
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="2. Accessibility Engine" android:textStyle="bold" android:textSize="16sp" />
+                <TextView android:id="@+id/tv_status_access" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Missing" android:textStyle="bold" android:textColor="@android:color/holo_red_dark" android:layout_alignParentEnd="true"/>
+            </RelativeLayout>
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/btn_action"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:text="Grant Permissions"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:layout_marginTop="32dp"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/layout_dashboard"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/toolbar"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <HorizontalScrollView
+            android:id="@+id/scroll_folders"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingHorizontal="24dp"
+            android:scrollbars="none">
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/chip_group_folders"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:singleSelection="true"
+                app:selectionRequired="true"/>
+        </HorizontalScrollView>
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="8dp">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recycler_history"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:paddingBottom="80dp"
+                android:clipToPadding="false"/>
+
+            <LinearLayout
+                android:id="@+id/empty_state_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:layout_gravity="center"
+                android:layout_marginBottom="64dp"
+                android:visibility="gone">
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="" android:textSize="48sp"/>
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="No clips found" android:textSize="18sp" android:textStyle="bold" android:textColor="#424242" android:layout_marginTop="16dp"/>
+            </LinearLayout>
+        </FrameLayout>
+    </LinearLayout>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab_launch_bubble"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="24dp"
+        android:src="@android:drawable/ic_media_play"
+        app:tint="@android:color/white"
+        app:backgroundTint="#3F51B5"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginBottom="32dp"/>
+        app:layout_constraintEnd_toEndOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
