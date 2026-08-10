@@ -12,6 +12,11 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import android.graphics.Bitmap
+import android.os.Build
+import android.view.Display
+import java.io.File
+import java.io.FileOutputStream
 
 class OmniAccessibilityService : AccessibilityService() {
 
@@ -82,6 +87,59 @@ class OmniAccessibilityService : AccessibilityService() {
             }
         } else {
             Toast.makeText(this, "Please highlight text first!", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    fun takeSmartScreenshot() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+
+            takeScreenshot(
+                Display.DEFAULT_DISPLAY,
+                mainExecutor,
+                object : TakeScreenshotCallback {
+                    override fun onSuccess(screenshot: ScreenshotResult) {
+                        try {
+                            val bitmap = Bitmap.wrapHardwareBuffer(
+                                screenshot.hardwareBuffer,
+                                screenshot.colorSpace
+                            )
+
+                            if (bitmap != null) {
+                                val filename = "omni_shot_${System.currentTimeMillis()}.png"
+                                val file = File(applicationContext.filesDir, filename)
+                                val outStream = FileOutputStream(file)
+
+                                bitmap.compress(Bitmap.CompressFormat.PNG, 100, outStream)
+                                outStream.flush()
+                                outStream.close()
+
+                                val clip = Data(
+                                    text = "Screenshot Captured",
+                                    sourceApp = currentPackageName,
+                                    imagePath = file.absolutePath
+                                )
+
+                                serviceScope.launch {
+                                    repository.insert(clip)
+                                    withContext(Dispatchers.Main) {
+                                        Toast.makeText(applicationContext, "Screenshot Saved!", Toast.LENGTH_SHORT).show()
+                                    }
+                                }
+                            }
+                        } catch (e: Exception) {
+                            Log.e("OmniLens", "Failed to save screenshot", e)
+                        } finally {
+                            screenshot.hardwareBuffer.close()
+                        }
+                    }
+
+                    override fun onFailure(errorCode: Int) {
+                        Log.e("OmniLens", "Screenshot failed. Error code: $errorCode")
+                    }
+                }
+            )
+        } else {
+            Toast.makeText(this, "Screenshots require Android 11+", Toast.LENGTH_SHORT).show()
         }
     }
 
